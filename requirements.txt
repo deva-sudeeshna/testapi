@@ -1,4 +1,5 @@
-flask
-flask_restful
+Flask
+Flask-RESTful
+flask-jwt-extended
 pymysql
-uwsgi
+gunicorn

@@ -3,11 +3,11 @@ from decimal import Decimal
 import pymysql
 
 def query(querystr,return_json=True):
-    connection = pymysql.connect(host='localhost',
-                                user='root',
-                                password='Sudeeshna@5',
+    connection=pymysql.connect( host='cosc-skillup.cxgok3weok8n.ap-south-1.rds.amazonaws.com',
+                                user='admin',
+                                password='coscskillup',
                                 db='testapi',
-                        cursorclass=pymysql.cursors.DictCursor )
+                                cursorclass=pymysql.cursors.DictCursor )
     connection.begin()
     cursor=connection.cursor()
     cursor.execute(querystr)
@@ -16,12 +16,12 @@ def query(querystr,return_json=True):
     cursor.close()
     connection.close()
     if return_json:
-        return jsonify(result)
-    else: 
+         return jsonify(result)
+    else:
         return result
 
 def encode(data):
-    for row in data: 
+    for row in data:
         for key,value in row.items():
             if isinstance(value,Decimal):
                 row[key]=str(value)
