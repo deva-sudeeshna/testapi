@@ -16,16 +16,14 @@ class User():
 
 class AdminLogin(Resource):
     def post(self):
-        return select * from admin
         parser=reqparse.RequestParser()
         parser.add_argument('admin_id',type=int,required=True,help="Admin_id cannot be left blank!")
         parser.add_argument("password",type=str,required=True,help="password cannot be left blank!")
         data=parser.parse_args()
-        print(data)
         user=User.getUserByadmin_id(data['admin_id'])
         print(user)
         if user and safe_str_cmp(user.password,data['password']):
             access_token=create_access_token(identity=user.admin_id,expires_delta=False)
-            return {'access_token':access_token},200
+            return {"message":"ALLOW ACCESS !!"},200
         return {"message":"Invalid Credentials!"}, 401 
 
