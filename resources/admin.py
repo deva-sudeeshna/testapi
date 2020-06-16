@@ -21,7 +21,6 @@ class AdminLogin(Resource):
         parser.add_argument("password",type=str,required=True,help="password cannot be left blank!")
         data=parser.parse_args()
         user=User.getUserByadmin_id(data['admin_id'])
-        print(user)
         if user and safe_str_cmp(user.password,data['password']):
             access_token=create_access_token(identity=user.admin_id,expires_delta=False)
             return {"message":"ALLOW ACCESS !!"},200
