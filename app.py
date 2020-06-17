@@ -26,7 +26,7 @@ def invalid_token_callback(error):
 
 api.add_resource(AdminLogin,'/login')
 api.add_resource(AddCC,'/addcc')
-app.run(port='8055',debug=True)
+#app.run(port='8055',debug=True)
 
-''''if __name__=='__main__':
-    app.run()'''
+if __name__=='__main__':
+    app.run()
