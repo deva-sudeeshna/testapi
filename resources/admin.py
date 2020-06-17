@@ -43,7 +43,8 @@ class AddCC(Resource):
                 return {"message" : "CC member already exists with this Roll_no!"},400
             else: 
                 query(f""" insert into CC(name,roll_no,club_id,ph_no,email) 
-                     values('{data['name']}','{data['roll_no']}','{data['club_id']}','{data['ph_no']}','{data['email']}')""")
+                         values('{data['name']}','{data['roll_no']}','{data['club_id']}','{data['ph_no']}','{data['email']}')""")
+                query(f"""insert into login_details(user_id,password,role) values('{data['roll_no']}','{data['roll_no']}','CC')""")
         except:
             return {"message" :"Error in details"},500
         #return {"message":"Succesful"},201
@@ -53,10 +54,12 @@ class AddCC(Resource):
             s.starttls()
             s.ehlo()
             s.login('cbit10793@gmail.com', 'admin@sudhee') 
-            message = "LOGIN DETAILS"+"\n\n"+"Login_id: " + data['roll_no'] + "\n" + "Password:  " + data['roll_no']
+            message = "LOGIN DETAILS"+"\n\n"+"user_id: " + data['roll_no'] + "\n" + "Password:  " + data['roll_no']
             s.sendmail("cbit10793@gmail.com", data['email'],message)  
             s.quit() 
             return {"message":"Succesfully sent a email given!"},201
         except:
             return {"message":"Unable to send mail"},500
+
+
 
