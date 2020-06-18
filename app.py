@@ -2,7 +2,7 @@ from flask import Flask,jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from resources.admin import AdminLogin,AddCC,AddClub
-from resources.CC import CClogin,add_event,delete_event
+from resources.CC import CClogin,add_event,delete_event,edit_event
 
 
 app=Flask(__name__)
@@ -29,10 +29,10 @@ api.add_resource(AdminLogin,'/login')
 api.add_resource(AddCC,'/addcc')
 api.add_resource(CClogin,'/cclogin')
 api.add_resource(AddClub,'/clubs')
-api.add_resource(add_event,'/addevent')
+api.add_resource(add_event,'/add_event')
 api.add_resource(delete_event,'/delete_event')
+api.add_resource(edit_event,'/edit_event')
 
-
-#app.run(port='8055',debug=True)
+app.run(port='8055',debug=True)
 if __name__=='__main__':
     app.run()

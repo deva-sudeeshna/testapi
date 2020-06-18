@@ -52,9 +52,10 @@ class add_event(Resource):
                                         '{data['event_description']}',
                                         '{data['event_venue']}',
                                         '{data['event_loc']}')""")
+                return {"message":"Succesfully added event details"},201
         except:
-            return {"message" :"Error in details"},500
-        return {"message":"Succesfully added event details"},201
+            return {"message" :"Error in details can't add details"},500
+        
 
 class edit_event(Resource):
      def post(self):
@@ -71,17 +72,21 @@ class edit_event(Resource):
         try:
             x=query(f"""SELECT * FROM event_details where event_id = '{data["event_id"]}'""",return_json=False)
             if len(x)>0: 
-                return {"message" : "Event already exists with this event_id!"},400
+                print("if")
+                query(f""" update event_details set
+                                    event_name='{data['event_name']}',
+                                    event_branch='{data['event_branch']}',
+                                    club_name='{data['club_name']}',
+                                    event_description='{data['event_description']}',
+                                    event_venue='{data['event_venue']}',
+                                    event_loc =  '{data['event_loc']}' 
+                                    where event_id = '{data["event_id"]}'""")
+                return {"message" : "Details are edited successfully!"},201
             else:
-                query(f""" insert into event_details(event_id,event_name,event_branch,club_name,event_description,event_venue,event_loc) 
-                            values({data['event_id']},'{data['event_name']}','{data['event_branch']}',
-                                        '{data['club_name']}',
-                                        '{data['event_description']}',
-                                        '{data['event_venue']}',
-                                        '{data['event_loc']}')""")
+                return {"message"  : "Event_id doesn't exist"},400
         except:
-            return {"message" :"Error in details"},500
-        return {"message":"Succesfully added event details"},201
+            return {"message" :"Error in details can't edit"},500
+        
 
 class delete_event(Resource):
     def post(self):
@@ -96,7 +101,7 @@ class delete_event(Resource):
                 else:
                     return{"message":"This Event_id doesn't exist!"},400
         except:
-            return{"message":"Wrong details entered"},500
+            return{"message":"Wrong details entered can't delete the event"},500
 
 
 
