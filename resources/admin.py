@@ -62,4 +62,24 @@ class AddCC(Resource):
             return {"message":"Unable to send mail"},500
 
 
+class AddClub(Resource):
+    def post(self):
+        parser=reqparse.RequestParser()
+        parser.add_argument('club_name',type=str,required=True,help="Club_name cannot be kept blank!")
+        parser.add_argument('club_id',type=int,required=True,help="Club_id cannot be kept blank!")
+        parser.add_argument('branch',type=str,required=True,help="Branch cannot be kept blank!")
+        data=parser.parse_args()
+        try:
+            x=query(f"""SELECT * FROM clubs where club_id = '{data["club_id"]}'""",return_json=False)
+            if len(x)>0: 
+                return {"message" : "Club already exists with this club_id!"},400
+            else: 
+                query(f""" insert into clubs(club_name,club_id,branch) 
+                         values('{data['club_name']}',{data['club_id']},'{data['branch']}')""")
+        except:
+            return {"message" :"Error in details"},500
+        return {"message":"Succesful"},201
+
+
+
 

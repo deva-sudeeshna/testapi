@@ -1,8 +1,9 @@
 from flask import Flask,jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-from resources.admin import AdminLogin,AddCC
-from resources.CC_login import CClogin
+from resources.admin import AdminLogin,AddCC,AddClub
+from resources.CC import CClogin,add_event
+
 
 app=Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS']=True
@@ -24,10 +25,14 @@ def invalid_token_callback(error):
         'message': 'Signature verification failed.'
     }), 401
 
-
 api.add_resource(AdminLogin,'/login')
 api.add_resource(AddCC,'/addcc')
 api.add_resource(CClogin,'/cclogin')
-#app.run(port='8055',debug=True)
-if __name__=='__main__':
-    app.run()
+api.add_resource(AddClub,'/clubs')
+api.add_resource(add_event,'/addevent')
+
+
+
+app.run(port='8055',debug=True)
+'''if __name__=='__main__':
+    app.run()'''
