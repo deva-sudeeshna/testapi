@@ -33,6 +33,6 @@ api.add_resource(add_event,'/add_event')
 api.add_resource(delete_event,'/delete_event')
 api.add_resource(edit_event,'/edit_event')
 
-app.run(port='8055',debug=True)
+#app.run(port='8055',debug=True)
 if __name__=='__main__':
     app.run()
