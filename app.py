@@ -33,6 +33,6 @@ api.add_resource(add_event,'/addevent')
 
 
 
-app.run(port='8055',debug=True)
-'''if __name__=='__main__':
-    app.run()'''
+#app.run(port='8055',debug=True)
+if __name__=='__main__':
+    app.run()

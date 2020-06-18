@@ -40,13 +40,12 @@ class add_event(Resource):
         parser.add_argument('event_venue',type=str,required=True,help="user_id cannot be left blank!")
         parser.add_argument('event_loc',type=str,required=True,help="event_loc cannot be left blank!")
         data=parser.parse_args()
-        print(data)
+        
         try:
             x=query(f"""SELECT * FROM event_details where event_id = '{data["event_id"]}'""",return_json=False)
             if len(x)>0: 
                 return {"message" : "Event already exists with this event_id!"},400
             else:
-                print("else")
                 query(f""" insert into event_details(event_id,event_name,event_branch,club_name,event_description,event_venue,event_loc) 
                             values({data['event_id']},'{data['event_name']}','{data['event_branch']}',
                                         '{data['club_name']}',
