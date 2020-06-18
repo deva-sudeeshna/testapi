@@ -75,7 +75,7 @@ class AddClub(Resource):
                 return {"message" : "Club already exists with this club_id!"},400
             else: 
                 query(f""" insert into clubs(club_name,club_id,branch) 
-                         values('{data['club_name']}',{data['club_id']},'{data['branch']}')""")
+                         values('{data['club_name']}','{data['club_id']}','{data['branch']}')""")
         except:
             return {"message" :"Error in details"},500
         return {"message":"Succesful"},201
