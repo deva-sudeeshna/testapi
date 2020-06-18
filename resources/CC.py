@@ -40,7 +40,7 @@ class add_event(Resource):
         parser.add_argument('event_venue',type=str,required=True,help="user_id cannot be left blank!")
         parser.add_argument('event_loc',type=str,required=True,help="event_loc cannot be left blank!")
         data=parser.parse_args()
-        
+
         try:
             x=query(f"""SELECT * FROM event_details where event_id = '{data["event_id"]}'""",return_json=False)
             if len(x)>0: 
@@ -55,5 +55,50 @@ class add_event(Resource):
         except:
             return {"message" :"Error in details"},500
         return {"message":"Succesfully added event details"},201
+
+class edit_event(Resource):
+     def post(self):
+        parser=reqparse.RequestParser()
+        parser.add_argument('event_id',type=int,required=True,help="event_id cannot be left blank!")
+        parser.add_argument("event_name",type=str,required=True,help="event_name cannot be left blank!")
+        parser.add_argument('event_branch',type=str,required=True,help="event_branch cannot be left blank!")
+        parser.add_argument('club_name',type=str,required=True,help="club_name cannot be left blank!")
+        parser.add_argument('event_description',type=str,required=True,help="event_description cannot be left blank!")
+        parser.add_argument('event_venue',type=str,required=True,help="user_id cannot be left blank!")
+        parser.add_argument('event_loc',type=str,required=True,help="event_loc cannot be left blank!")
+        data=parser.parse_args()
+
+        try:
+            x=query(f"""SELECT * FROM event_details where event_id = '{data["event_id"]}'""",return_json=False)
+            if len(x)>0: 
+                return {"message" : "Event already exists with this event_id!"},400
+            else:
+                query(f""" insert into event_details(event_id,event_name,event_branch,club_name,event_description,event_venue,event_loc) 
+                            values({data['event_id']},'{data['event_name']}','{data['event_branch']}',
+                                        '{data['club_name']}',
+                                        '{data['event_description']}',
+                                        '{data['event_venue']}',
+                                        '{data['event_loc']}')""")
+        except:
+            return {"message" :"Error in details"},500
+        return {"message":"Succesfully added event details"},201
+
+class delete_event(Resource):
+    def post(self):
+        parser=reqparse.RequestParser()
+        parser.add_argument('event_id',type=int,required=True,help="event_id cannot be left blank!")
+        data=parser.parse_args()
+        try:
+                x=query(f"""SELECT * FROM event_details where event_id = '{data["event_id"]}'""",return_json=False)
+                if len(x)>0: 
+                    query(f"""delete from event_details where event_id = '{data["event_id"]}'""",return_json=False)
+                    return {"message" : "Event is Succesfully deleted!"},201
+                else:
+                    return{"message":"This Event_id doesn't exist!"},400
+        except:
+            return{"message":"Wrong details entered"},500
+
+
+
 
 
