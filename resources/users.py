@@ -87,11 +87,26 @@ class getdetails(Resource):
 class displayisfav(Resource):
     def get(self):
         parser=reqparse.RequestParser()
-        parser.add_argument('user_id',type=str,required=True,help="user_id cannot be left blank!") 
+        parser.add_argument('user_id',type=str,required=True,help="user_id cannot be left blank!")  
         data=parser.parse_args()
         try:
-            return query(f"""SELECT * FROM event_details  WHERE event_id in 
-                    (select even_id from registration where user_id='{data['user_id']}')""",
-                    return_json=True),200
+            b= query(f"""SELECT * FROM event_details  WHERE event_name in (select event_name from registration where user_id='{data['user_id']}' and isfav='yes') """,return_json=False)
+
+            if(len(b)>0):
+                return query(f"""SELECT * FROM event_details  WHERE event_name in (select event_name from registration where user_id='{data['user_id']}' and isfav='yes') """,return_json=True)
+            else:
+                return{"message":"no favourite events"},404
         except:
-            return{"message":"Register the Events"},500
+            return{"message":"there was an error connecting to registration table"},400
+
+
+
+class paid(Resource):
+    def get(self):
+        return query(f"""SELECT * FROM registration  WHERE payment_status in('true','paid','yes') """)
+
+
+
+class unpaid(Resource):
+    def get(self):
+        return query(f"""SELECT * FROM registration  WHERE payment_status in('false','not paid','no') """)

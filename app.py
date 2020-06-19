@@ -3,7 +3,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from resources.admin import AdminLogin,AddCC,AddClub,eventdetails,ccdetails
 from resources.CC import CClogin,add_event,delete_event,edit_event,change_password
-from resources.users import Registration,userLogin,signup,displayisfav,getdetails
+from resources.users import Registration,userLogin,signup,displayisfav,getdetails,paid,unpaid
 
 app=Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS']=True
@@ -32,6 +32,9 @@ api.add_resource(CClogin,'/cclogin')
 api.add_resource(AddClub,'/clubs')
 api.add_resource(ccdetails,'/ccdetails')
 
+api.add_resource(paid,'/paid')
+api.add_resource(unpaid,'/notpaid')
+
 api.add_resource(userLogin,'/userlogin')
 api.add_resource(signup,'/signup')
 api.add_resource(getdetails,'/event_details')
@@ -43,8 +46,6 @@ api.add_resource(delete_event,'/delete_event')
 api.add_resource(edit_event,'/edit_event')
 api.add_resource(change_password,'/change_password')
 
-
-
 #app.run(port='8055',debug=True)
 if __name__=='__main__':
-    app.run()
+   app.run() 
