@@ -2,8 +2,6 @@ from flask_restful import Resource,reqparse
 from werkzeug.security import safe_str_cmp
 from flask_jwt_extended import create_access_token,jwt_required
 from db import query
-import smtplib 
-from email.message import EmailMessage
 
 
 class User_cc():

@@ -80,6 +80,16 @@ class AddClub(Resource):
             return {"message" :"Error in details"},500
         return {"message":"Succesful"},201
 
+class eventdetails(Resource):
+    def get(self):
+        try:
+            x=query(f"""SELECT * FROM event_details""",return_json=False)
+            if (len(x)>0):
+                return query(f"""SELECT * FROM event_details""")
+            else:
+                return {"message" : "No events to display"},400
+        except:
+            return{"message":"Can't connect to events table"},500
 
 
 
