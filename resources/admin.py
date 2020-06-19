@@ -91,5 +91,16 @@ class eventdetails(Resource):
         except:
             return{"message":"Can't connect to events table"},500
 
+class ccdetails(Resource):
+    def get(self):
+        try:
+            x=query(f"""SELECT * FROM CC""",return_json=False)
+            if (len(x)>0):
+                return query(f"""SELECT * FROM CC""")
+            else:
+                return {"message" : "No CC member!"},400
+        except:
+            return{"message":"Can't connect to CC table"},500
+
 
 
