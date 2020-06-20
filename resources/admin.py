@@ -37,13 +37,14 @@ class AddCC(Resource):
         parser.add_argument('ph_no',type=str,required=True,help="Phone Number cannot be kept blank!")
         parser.add_argument('email',type=str,required=True,help="Email Adress cannot be kept blank!")
         data=parser.parse_args()
+
         try:
             x=query(f"""SELECT * FROM CC where roll_no = '{data["roll_no"]}'""",return_json=False)
             if len(x)>0: 
                 return {"message" : "CC member already exists with this Roll_no!"},400
-            else: 
-                query(f""" insert into CC(name,roll_no,club_id,ph_no,email) 
-                         values('{data['name']}','{data['roll_no']}','{data['club_id']}','{data['ph_no']}','{data['email']}')""")
+            else:                
+                query(f"""insert into CC(name,roll_no,club_id,ph_no,email) values('{data['name']}','{data['roll_no']}',
+                            '{data['club_id']}','{data['ph_no']}','{data['email']}')""")
                 query(f"""insert into login_details(user_id,password,role) values('{data['roll_no']}','{data['roll_no']}','CC')""")
         except:
             return {"message" :"Error in details"},500
