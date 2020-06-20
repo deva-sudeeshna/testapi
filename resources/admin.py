@@ -40,12 +40,13 @@ class AddCC(Resource):
 
         try:
             x=query(f"""SELECT * FROM CC where roll_no = '{data["roll_no"]}'""",return_json=False)
+            print
             if len(x)>0: 
                 return {"message" : "CC member already exists with this Roll_no!"},400
             else:                
                 query(f"""insert into CC(name,roll_no,club_id,ph_no,email) values('{data['name']}','{data['roll_no']}',
                             '{data['club_id']}','{data['ph_no']}','{data['email']}')""")
-                query(f"""insert into login_details(user_id,password,role) values('{data['roll_no']}','{data['roll_no']}','CC')""")
+                #query(f"""insert into login_details(user_id,password,role) values('{data['roll_no']}','{data['roll_no']}','CC')""")
         except:
             return {"message" :"Error in details"},500
         #return {"message":"Succesful"},201
