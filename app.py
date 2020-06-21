@@ -34,13 +34,6 @@ api.add_resource(ccdetails,'/ccdetails')
 api.add_resource(Admin_Forgot_Password,'/admin_forgot_password')
 
 
-api.add_resource(userLogin,'/userlogin')
-api.add_resource(signup,'/signup')
-api.add_resource(getdetails,'/event_details')
-api.add_resource(displayisfav,'/fav')
-api.add_resource(Registration,'/registration')
-api.add_resource(user_Forgot_Password,'/user_forgot_password')
-
 api.add_resource(add_event,'/add_event')
 api.add_resource(delete_event,'/delete_event')
 api.add_resource(edit_event,'/edit_event')
@@ -49,6 +42,15 @@ api.add_resource(CC_Forgot_Password,'/cc_forgot_password')
 api.add_resource(paid,'/paid')
 api.add_resource(unpaid,'/notpaid')
 
-#app.run(port='8055',debug=True)
-if __name__=='__main__':
-  app.run()
+
+api.add_resource(userLogin,'/userlogin')
+api.add_resource(signup,'/signup')
+api.add_resource(getdetails,'/event_details')
+api.add_resource(displayisfav,'/fav')
+api.add_resource(Registration,'/registration')
+api.add_resource(user_Forgot_Password,'/user_forgot_password')
+
+
+app.run(port='8055',debug=True)
+#if __name__=='__main__':
+#app.run()

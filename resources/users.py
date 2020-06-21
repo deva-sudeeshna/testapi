@@ -22,21 +22,29 @@ class Registration(Resource):
         parser=reqparse.RequestParser()
         parser.add_argument('user_id',type=str,required=True,help="user_id cannot be left blank!")
         parser.add_argument("event_name",type=str,required=True,help="event_name cannot be left blank!")
-        parser.add_argument('event_branch',type=str,required=True,help="event_branch cannot be kept blank!")
+        parser.add_argument('event_branch',type=str,required=True,help="event_branch cannot be left blank!")
+        parser.add_argument("isfav",type=str,required=True,help="isfav cannot be left blank!")
+        parser.add_argument("payment_status",type=str,required=True,help="payment_status cannot be left blank!")
+
         data=parser.parse_args()
         try:
-            x=query(f"""SELECT * FROM registration where user_id = '{data["user_id"]}' and 
-                        event_id = (select event_id from event_details
-                                        where event_name ='{data['event_name']}' and 
-                                        event_branch ='{data['event_branch']}'
-                                    )"""
-                        ,return_json=False)
-            if len(x)>0: 
-                return{"message": "Already registered this event"},400
-            query(f"""insert into registration(event_id,user_id,event_branch,event_name) 
-                        values((select event_id from event_details
-                        where event_name ='{data['event_name']}' and event_branch ='{data['event_branch']}'),'{data["user_id"]}','{data["event_branch"]}','{data['event_name']}')""")
-            return {"message" : "Registration Successful"},201
+            y=query(f"""select * from login_details where user_id='{data['user_id']}'""",return_json=False)
+            if(len(y)>0):
+                x=query(f"""SELECT * FROM registration where user_id = '{data["user_id"]}' and 
+                            event_id = (select event_id from event_details
+                                            where event_name ='{data['event_name']}' and 
+                                            event_branch ='{data['event_branch']}'
+                                        )"""
+                            ,return_json=False)
+                if len(x)>0: 
+                    return{"message": "Already registered this event"},400
+                query(f"""insert into registration(event_id,user_id,event_branch,event_name,isfav,payment_status) 
+                            values((select event_id from event_details
+                            where event_name ='{data['event_name']}' and event_branch ='{data['event_branch']}'),'{data["user_id"]}','{data["event_branch"]}','{data['event_name']}','{data['isfav']}','{data['payment_status']}')""")
+                return {"message" : "Registration Successful"},201
+            
+            else:
+                return {"message"  : "Invalid user_id!"},400
         except:
             return {"message" : "Can't Register the Event"},500
             
