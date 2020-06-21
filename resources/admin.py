@@ -45,7 +45,7 @@ class Admin_Forgot_Password(Resource):
             s.ehlo()
             s.login('cbit10793@gmail.com', 'admin@sudhee') 
             message = "\""+ x[0]['password']+"\"" + "  was your password"
-            s.sendmail("cbit10793@gmail.com", "deva.sudeeshna5@gmail.com",message)  
+            s.sendmail("cbit10793@gmail.com", "cbit10793@gmail.com",message)  
             s.quit() 
             return {"message":"Succesfully sent to your mail!"},201
         except:

@@ -73,7 +73,7 @@ class user_Forgot_Password(Resource):
                 s.quit() 
                 return {"message":"Succesfully sent to your mail!"},201
             else:
-                return {"message" : "No CC is present with the given roll_no"},400    
+                return {"message" : "No user is present with the given user_id]"},400    
         except:
             return {"message":"Unable to send mail"},500
 

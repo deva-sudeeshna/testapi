@@ -59,13 +59,14 @@ class CC_Forgot_Password(Resource):
         try:
             z=query(f"""select * from CC where roll_no = '{data['roll_no']}'""",return_json=False)
             if(len(z)>0):
-                x=query(f""" select roll_no,email from CC where roll_no = '{data['roll_no']}'""",return_json=False)
+                x=query(f""" select email from CC where roll_no = '{data['roll_no']}'""",return_json=False)
+                y=query(f""" select password from login_details where user_id = '{data['roll_no']}' and role like 'CC'""",return_json=False)
                 s = smtplib.SMTP("smtp.gmail.com", 587)
                 s.ehlo()
                 s.starttls()
                 s.ehlo()
                 s.login('cbit10793@gmail.com', 'admin@sudhee') 
-                message = "\""+ x[0]['roll_no']+"\""  +"  was your password"
+                message = "\""+ y[0]['password']+"\""  +"  was your password"
                 s.sendmail("cbit10793@gmail.com",x[0]['email'],message)  
                 s.quit() 
                 return {"message":"Succesfully sent to your mail!"},201
