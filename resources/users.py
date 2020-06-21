@@ -2,6 +2,9 @@ from flask_restful import Resource,reqparse
 from werkzeug.security import safe_str_cmp
 from flask_jwt_extended import create_access_token,jwt_required
 from db import query
+import smtplib 
+from email.message import EmailMessage
+
 
 class User():
     def __init__(self,user_id,password):
@@ -49,6 +52,32 @@ class userLogin(Resource):
             access_token=create_access_token(identity=user.user_id,expires_delta=False)
             return {"message":"ALLOW ACCESS !!"},200
         return {"message":"Invalid Credentials!"}, 401 
+
+class user_Forgot_Password(Resource):
+    def post(self):
+        parser=reqparse.RequestParser()
+        parser.add_argument('user_id',type=str,required=True,help="user_id cannot be left blank!")
+        parser.add_argument('email',type=str,required=True,help="user_id cannot be left blank!")
+        data=parser.parse_args()
+        try:
+            z=query(f"""select * from users where user_id = '{data['user_id']}'""",return_json=False)
+            if(len(z)>0):
+                x=query(f"""select password from login_details where user_id in(select user_id from users where user_id = '{data['user_id']}')""",return_json=False)
+                s = smtplib.SMTP("smtp.gmail.com", 587)
+                s.ehlo()
+                s.starttls()
+                s.ehlo()
+                s.login('cbit10793@gmail.com', 'admin@sudhee') 
+                message = "\""+ x[0]['password']+"\""  +"  was your password"
+                s.sendmail("cbit10793@gmail.com",data['email'],message)  
+                s.quit() 
+                return {"message":"Succesfully sent to your mail!"},201
+            else:
+                return {"message" : "No CC is present with the given roll_no"},400    
+        except:
+            return {"message":"Unable to send mail"},500
+
+
     
 
 class signup(Resource):

@@ -2,6 +2,9 @@ from flask_restful import Resource,reqparse
 from werkzeug.security import safe_str_cmp
 from flask_jwt_extended import create_access_token,jwt_required
 from db import query
+import smtplib 
+from email.message import EmailMessage
+
 
 
 class User_cc():
@@ -46,6 +49,32 @@ class change_password(Resource):
                 return {"message" : "Entered user_id doesn't exist!"},400
         except:
             return {"message" : "Unable to Change Password"},500
+
+
+class CC_Forgot_Password(Resource):
+    def post(self):
+        parser=reqparse.RequestParser()
+        parser.add_argument('roll_no',type=str,required=True,help="roll_no cannot be left blank!")
+        data=parser.parse_args()
+        try:
+            z=query(f"""select * from CC where roll_no = '{data['roll_no']}'""",return_json=False)
+            if(len(z)>0):
+                x=query(f""" select roll_no,email from CC where roll_no = '{data['roll_no']}'""",return_json=False)
+                s = smtplib.SMTP("smtp.gmail.com", 587)
+                s.ehlo()
+                s.starttls()
+                s.ehlo()
+                s.login('cbit10793@gmail.com', 'admin@sudhee') 
+                message = "\""+ x[0]['roll_no']+"\""  +"  was your password"
+                s.sendmail("cbit10793@gmail.com",x[0]['email'],message)  
+                s.quit() 
+                return {"message":"Succesfully sent to your mail!"},201
+            else:
+                return {"message" : "No CC is present with the given roll_no"},400
+            
+        except:
+            return {"message":"Unable to send mail"},500
+
 
 
 class add_event(Resource):

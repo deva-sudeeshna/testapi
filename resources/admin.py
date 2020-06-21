@@ -28,6 +28,31 @@ class AdminLogin(Resource):
             return {"message":"ALLOW ACCESS !!"},200
         return {"message":"Invalid Credentials!"}, 401 
 
+class Admin_Forgot_Password(Resource):
+    def post(self):
+        parser=reqparse.RequestParser()
+        parser.add_argument('admin_id',type=int,required=True,help="Admin_id cannot be left blank!")
+        data=parser.parse_args()
+        try:
+            z=query(f"""select * from admin where admin_id = '{data['admin_id']}'""",return_json=False)
+            if(len(z)>0):
+                x=query(f""" select password from admin where admin_id = '{data['admin_id']}'""",return_json=False)
+            else:
+                return {"message" : "No Admin is present with the given id"},400
+            s = smtplib.SMTP("smtp.gmail.com", 587)
+            s.ehlo()
+            s.starttls()
+            s.ehlo()
+            s.login('cbit10793@gmail.com', 'admin@sudhee') 
+            message = "\""+ x[0]['password']+"\"" + "  was your password"
+            s.sendmail("cbit10793@gmail.com", "deva.sudeeshna5@gmail.com",message)  
+            s.quit() 
+            return {"message":"Succesfully sent to your mail!"},201
+        except:
+            return {"message":"Unable to send mail"},500
+
+
+
 class AddCC(Resource):
     def post(self):
         parser=reqparse.RequestParser()
@@ -46,7 +71,7 @@ class AddCC(Resource):
             else:                
                 query(f"""insert into CC(name,roll_no,club_id,ph_no,email) values('{data['name']}','{data['roll_no']}',
                             '{data['club_id']}','{data['ph_no']}','{data['email']}')""")
-                #query(f"""insert into login_details(user_id,password,role) values('{data['roll_no']}','{data['roll_no']}','CC')""")
+                query(f"""insert into login_details(user_id,password,role) values('{data['roll_no']}','{data['roll_no']}','CC')""")
         except:
             return {"message" :"Error in details"},500
         #return {"message":"Succesful"},201
@@ -82,6 +107,7 @@ class AddClub(Resource):
             return {"message" :"Error in details"},500
         return {"message":"Succesful"},201
 
+
 class eventdetails(Resource):
     def get(self):
         try:
@@ -92,6 +118,7 @@ class eventdetails(Resource):
                 return {"message" : "No events to display"},400
         except:
             return{"message":"Can't connect to events table"},500
+
 
 class ccdetails(Resource):
     def get(self):
