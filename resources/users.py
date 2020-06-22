@@ -34,15 +34,18 @@ class Registration(Resource):
                                     )""",return_json=False)
             if len(x)>0: 
                 return{"message": "Already registered this event"},400
+            
             y=query(f"""select event_id from event_details
                                 where event_name ='{data['event_name']}' and 
                                 event_branch ='{data['event_branch']}'""",return_json=False)
+
             if(len(y)>0):
                 query(f"""insert into registration(event_id,user_id,event_branch,event_name,isfav,payment_status) 
                                 values('{y[0]['event_id']}','{data["user_id"]}','{data["event_branch"]}','{data['event_name']}','{data['isfav']}','{data['payment_status']}')""")
                 return {"message" : "Registration Successful"},201
+
             else :
-                return {"message" : "Event_name or Event_branch are invalid"},400
+                return {"message" :  "invalid"},400
             
         except:
             return {"message" : "Can't Register the Event"},500
