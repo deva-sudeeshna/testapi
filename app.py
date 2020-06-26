@@ -47,6 +47,6 @@ api.add_resource(Displayfav,'/fav')
 api.add_resource(Registration,'/registration')
 api.add_resource(UserForgotPassword,'/userforgotpassword')
 
-app.run(port='8055',debug=True)
-"""if __name__=='__main__':
-    app.run()"""
+#app.run(port='8055',debug=True)
+if __name__=='__main__':
+    app.run()
