@@ -7,15 +7,15 @@ from email.message import EmailMessage
 
 
 
-class User_cc():
+class Usercc():
     def __init__(self,user_id,password):
         self.user_id=user_id
         self.password=password
 
     @classmethod
     def getUserByuser_id(cls,user_id):
-        res=query(f"""SELECT user_id,password FROM login_details WHERE user_id='{user_id}'""",return_json=False)
-        if len(res)>0:  return User_cc(res[0]['user_id'],res[0]['password'])
+        res=query(f"""SELECT user_id,password FROM login_details WHERE user_id='{user_id}' and role ='CC'""",return_json=False)
+        if len(res)>0:  return Usercc(res[0]['user_id'],res[0]['password'],res[0]["role"])
         return False
 
 class CClogin(Resource):
@@ -23,14 +23,15 @@ class CClogin(Resource):
         parser=reqparse.RequestParser()
         parser.add_argument('user_id',type=int,required=True,help="user_id cannot be left blank!")
         parser.add_argument("password",type=str,required=True,help="password cannot be left blank!")
+        parser.add_argument("role",type=str,required=True,help="role cannot be left blank!")
         data=parser.parse_args()
-        user=User_cc.getUserByuser_id(data['user_id'])
+        user=Usercc.getUserByuser_id(data['user_id'])
         if user and safe_str_cmp(user.password,data['password']):
             access_token=create_access_token(identity=user.user_id,expires_delta=False)
             return {"message":"ALLOW ACCESS !!"},200
         return {"message":"Invalid Credentials!"}, 401 
 
-class change_password(Resource):
+class ChangePassword(Resource):
     def post(self):
         parser=reqparse.RequestParser()
         parser.add_argument('user_id',type=int,required=True,help="user_id cannot be left blank!")
@@ -42,7 +43,7 @@ class change_password(Resource):
             if len(x)>0: 
                 if(data["password"]==data["confirm password"]):
                     query(f"""update  login_details set password = '{data['password']}' where user_id = '{data["user_id"]}'""")
-                    return {"message" : "Succefully changed password"},201
+                    return {"message" : "Successfully changed password"},201
                 else:
                     return {"message" : "Given Passwords doesnot match !"},400
             else:
@@ -51,7 +52,7 @@ class change_password(Resource):
             return {"message" : "Unable to Change Password"},500
 
 
-class CC_Forgot_Password(Resource):
+class CCForgotPassword(Resource):
     def post(self):
         parser=reqparse.RequestParser()
         parser.add_argument('roll_no',type=str,required=True,help="roll_no cannot be left blank!")
@@ -78,7 +79,7 @@ class CC_Forgot_Password(Resource):
 
 
 
-class add_event(Resource):
+class AddEvent(Resource):
     def post(self):
         parser=reqparse.RequestParser()
         parser.add_argument('event_id',type=int,required=True,help="event_id cannot be left blank!")
@@ -106,7 +107,7 @@ class add_event(Resource):
             return {"message" :"Error in details can't add details"},500
         
 
-class edit_event(Resource):
+class EditEvent(Resource):
      def post(self):
         parser=reqparse.RequestParser()
         parser.add_argument('event_id',type=int,required=True,help="event_id cannot be left blank!")
@@ -137,7 +138,7 @@ class edit_event(Resource):
             return {"message" :"Error in details can't edit"},500
         
 
-class delete_event(Resource):
+class DeleteEvent(Resource):
     def post(self):
         parser=reqparse.RequestParser()
         parser.add_argument('event_id',type=int,required=True,help="event_id cannot be left blank!")

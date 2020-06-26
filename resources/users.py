@@ -13,7 +13,7 @@ class User():
 
     @classmethod
     def getUserByuser_id(cls,user_id):
-        result=query(f"""SELECT user_id,password FROM login_details  WHERE user_id='{user_id}'""",return_json=False)
+        result=query(f"""SELECT user_id,password FROM login_details  WHERE user_id='{user_id}' and role= 'user' """,return_json=False)
         if len(result)>0:  return User(result[0]['user_id'],result[0]['password'])
         return False
 
@@ -51,11 +51,12 @@ class Registration(Resource):
             return {"message" : "Can't Register the Event"},500
             
 
-class userLogin(Resource):
+class UserLogin(Resource):
     def post(self):
         parser=reqparse.RequestParser()
         parser.add_argument('user_id',type=str,required=True,help="user_id cannot be left blank!")
         parser.add_argument("password",type=str,required=True,help="password cannot be left blank!")
+        parser.add_argument("role",type=str,required=True,help="role cannot be left blank!")
         data=parser.parse_args()
         user=User.getUserByuser_id(data['user_id'])
         if user and safe_str_cmp(user.password,data['password']):
@@ -63,7 +64,7 @@ class userLogin(Resource):
             return {"message":"ALLOW ACCESS !!"},200
         return {"message":"Invalid Credentials!"}, 401 
 
-class user_Forgot_Password(Resource):
+class UserForgotPassword(Resource):
     def post(self):
         parser=reqparse.RequestParser()
         parser.add_argument('user_id',type=str,required=True,help="user_id cannot be left blank!")
@@ -86,11 +87,9 @@ class user_Forgot_Password(Resource):
                 return {"message" : "No user is present with the given user_id]"},400    
         except:
             return {"message":"Unable to send mail"},500
-
-
     
 
-class signup(Resource):
+class Signup(Resource):
     def post(self):
         parser=reqparse.RequestParser()
         parser.add_argument('user_id',type=str,required=True,help="user_id cannot be kept blank!")
@@ -105,15 +104,15 @@ class signup(Resource):
                 query(f""" insert into users(user_id,password,phone_no) 
                      values('{data['user_id']}','{data['password']}','{data['phone_no']}')""")
                 query(f""" insert into login_details(user_id,password,role) 
-                     values('{data['user_id']}','{data['password']}','student')""")
+                     values('{data['user_id']}','{data['password']}','user')""")
                 return {"message":"Succesful"},201 
         except:
             return {"message" :"Error in details"},500
         
 
 
-class getdetails(Resource):
-    def get(self):
+class Getdetails(Resource):
+    def post(self):
         parser=reqparse.RequestParser()
         parser.add_argument('event_branch',type=str,required=True,help="event_branch cannot be left blank!")
         data=parser.parse_args()
@@ -123,7 +122,7 @@ class getdetails(Resource):
             return{"message":"there was an error connecting to events table"},500
 
 
-class displayisfav(Resource):
+class Displayfav(Resource):
     def get(self):
         parser=reqparse.RequestParser()
         parser.add_argument('user_id',type=str,required=True,help="user_id cannot be left blank!")  
@@ -140,12 +139,10 @@ class displayisfav(Resource):
 
 
 
-class paid(Resource):
+class Paid(Resource):
     def get(self):
         return query(f"""SELECT * FROM registration  WHERE payment_status in('true','paid','yes') """)
 
-
-
-class unpaid(Resource):
+class Unpaid(Resource):
     def get(self):
         return query(f"""SELECT * FROM registration  WHERE payment_status in('false','not paid','no') """)

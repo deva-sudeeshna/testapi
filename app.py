@@ -1,9 +1,9 @@
 from flask import Flask,jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-from resources.admin import AdminLogin,AddCC,AddClub,eventdetails,ccdetails,Admin_Forgot_Password
-from resources.CC import CClogin,add_event,delete_event,edit_event,change_password,CC_Forgot_Password
-from resources.users import Registration,userLogin,signup,displayisfav,getdetails,paid,unpaid,user_Forgot_Password
+from resources.admin import AdminLogin,AddCC,AddClub,EventDetails,CCdetails
+from resources.CC import CClogin,AddEvent,DeleteEvent,EditEvent,ChangePassword,CCForgotPassword
+from resources.users import Registration,UserLogin,Signup,Displayfav,Getdetails,Paid,Unpaid,UserForgotPassword
 
 app=Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS']=True
@@ -27,30 +27,26 @@ def invalid_token_callback(error):
 
 api.add_resource(AdminLogin,'/login')
 api.add_resource(AddCC,'/addcc')
-api.add_resource(eventdetails,'/events')
-api.add_resource(CClogin,'/cclogin')
+api.add_resource(EventDetails,'/events')
 api.add_resource(AddClub,'/clubs')
-api.add_resource(ccdetails,'/ccdetails')
-api.add_resource(Admin_Forgot_Password,'/admin_forgot_password')
+api.add_resource(CCdetails,'/ccdetails')
 
+api.add_resource(CClogin,'/cclogin')
+api.add_resource(AddEvent,'/addevent')
+api.add_resource(DeleteEvent,'/deleteevent')
+api.add_resource(EditEvent,'/editevent')
+api.add_resource(ChangePassword,'/changepassword')
+api.add_resource(CCForgotPassword,'/ccforgotpassword')
+api.add_resource(Paid,'/paid')
+api.add_resource(Unpaid,'/notpaid')
 
-api.add_resource(add_event,'/add_event')
-api.add_resource(delete_event,'/delete_event')
-api.add_resource(edit_event,'/edit_event')
-api.add_resource(change_password,'/change_password')
-api.add_resource(CC_Forgot_Password,'/cc_forgot_password')
-api.add_resource(paid,'/paid')
-api.add_resource(unpaid,'/notpaid')
-
-
-api.add_resource(userLogin,'/userlogin')
-api.add_resource(signup,'/signup')
-api.add_resource(getdetails,'/event_details')
-api.add_resource(displayisfav,'/fav')
+api.add_resource(UserLogin,'/userlogin')
+api.add_resource(Signup,'/signup')
+api.add_resource(Getdetails,'/eventdetails')
+api.add_resource(Displayfav,'/fav')
 api.add_resource(Registration,'/registration')
-api.add_resource(user_Forgot_Password,'/user_forgot_password')
+api.add_resource(UserForgotPassword,'/userforgotpassword')
 
-
-#app.run(port='8055',debug=True)
-if __name__=='__main__':
-    app.run()
+app.run(port='8055',debug=True)
+"""if __name__=='__main__':
+    app.run()"""

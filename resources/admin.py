@@ -28,31 +28,6 @@ class AdminLogin(Resource):
             return {"message":"ALLOW ACCESS !!"},200
         return {"message":"Invalid Credentials!"}, 401 
 
-class Admin_Forgot_Password(Resource):
-    def post(self):
-        parser=reqparse.RequestParser()
-        parser.add_argument('admin_id',type=int,required=True,help="Admin_id cannot be left blank!")
-        data=parser.parse_args()
-        try:
-            z=query(f"""select * from admin where admin_id = '{data['admin_id']}'""",return_json=False)
-            if(len(z)>0):
-                x=query(f""" select password from admin where admin_id = '{data['admin_id']}'""",return_json=False)
-            else:
-                return {"message" : "No Admin is present with the given id"},400
-            s = smtplib.SMTP("smtp.gmail.com", 587)
-            s.ehlo()
-            s.starttls()
-            s.ehlo()
-            s.login('cbit10793@gmail.com', 'admin@sudhee') 
-            message = "\""+ x[0]['password']+"\"" + "  was your password"
-            s.sendmail("cbit10793@gmail.com", "cbit10793@gmail.com",message)  
-            s.quit() 
-            return {"message":"Succesfully sent to your mail!"},201
-        except:
-            return {"message":"Unable to send mail"},500
-
-
-
 class AddCC(Resource):
     def post(self):
         parser=reqparse.RequestParser()
@@ -65,7 +40,7 @@ class AddCC(Resource):
 
         try:
             x=query(f"""SELECT * FROM CC where roll_no = '{data["roll_no"]}'""",return_json=False)
-            print
+            
             if len(x)>0: 
                 return {"message" : "CC member already exists with this Roll_no!"},400
             else:                
@@ -108,7 +83,7 @@ class AddClub(Resource):
         return {"message":"Succesful"},201
 
 
-class eventdetails(Resource):
+class EventDetails(Resource):
     def get(self):
         try:
             x=query(f"""SELECT * FROM event_details""",return_json=False)
@@ -120,7 +95,7 @@ class eventdetails(Resource):
             return{"message":"Can't connect to events table"},500
 
 
-class ccdetails(Resource):
+class CCdetails(Resource):
     def get(self):
         try:
             x=query(f"""SELECT * FROM CC""",return_json=False)
