@@ -176,10 +176,10 @@ class Displayfav(Resource):
 
 
 
-class Paid(Resource):
+class Registered(Resource):
     def get(self):
-        return query(f"""SELECT * FROM registration  WHERE payment_status in('true','paid','yes') """)
+        return query(f"""SELECT * FROM registration  WHERE registration_status ='True'""")
 
-class Unpaid(Resource):
+class NotRegistered(Resource):
     def get(self):
-        return query(f"""SELECT * FROM registration  WHERE payment_status in('false','not paid','no') """)
+        return query(f"""SELECT * FROM registration  WHERE registration_status ='False'""")
