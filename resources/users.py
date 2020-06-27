@@ -63,6 +63,8 @@ class UserLogin(Resource):
             return {"message":"ALLOW ACCESS !!"},200
         return {"message":"Invalid Credentials!"}, 401 
 
+
+
 class Favourites(Resource):
     def post(self):
         parser=reqparse.RequestParser()
@@ -71,22 +73,29 @@ class Favourites(Resource):
         parser.add_argument('event_branch',type=str,required=True,help="event_branch cannot be left blank!")
         data=parser.parse_args()
         try:
-            x=query(f"""select * from registration where user_id='{data['user_id']}',
+            x=query(f"""select * from registration where user_id='{data['user_id']}' and
                        event_name='{data['event_name']}'and event_branch='{data['event_branch']}'""",return_json=False)
+
             if(len(x)>0):
                 if x[0]['isfav']=='True':
-                    query(f"""update from registration set isfav='False'""")
+                    query(f"""update  registration set isfav='False' where user_id='{data['user_id']}' and
+                       event_name='{data['event_name']}'and event_branch='{data['event_branch']}'""")
+                    return {"message" : "This is not your fav event anymore"},201
                 else:
-                    query(f"""update from registration set isfav='True'""")
+                    query(f"""update  registration set isfav='True'where user_id='{data['user_id']}' and
+                       event_name='{data['event_name']}'and event_branch='{data['event_branch']}'""")
+                    return {"message": "Added to Favourites"},201
             else:
+    
                 z=query(f"""select event_id from event_details where event_name = '{data["event_name"]}' and
-                                                                     event_branch ='{data["event_branch"]}'""")
+                                                                     event_branch ='{data["event_branch"]}'""",return_json=False)
 
                 query(f"""insert into registration(user_id,event_id,event_name,event_branch,isfav,registration_status)
                                                     values('{data['user_id']}','{z[0]['event_id']}','{data['event_name']}','{data['event_branch']}',
                                                     'True','False') """ )
+                return{"message" : "Added to Favourites"},201
         except:
-            pass
+            return {"message"  : "Error!"},500
 
 
 
@@ -98,29 +107,30 @@ class Registration(Resource):
         parser.add_argument('event_branch',type=str,required=True,help="event_branch cannot be left blank!")
         data=parser.parse_args()
         try:
-            x=query(f"""select * from registration where user_id='{data['user_id']}',
+            x=query(f"""select * from registration where user_id='{data['user_id']}' and
                        event_name='{data['event_name']}'and event_branch='{data['event_branch']}'""",return_json=False)
 
             if(len(x)>0):
-                y=query(f"""select * from registration where user_id='{data['user_id']}',
+                y=query(f"""select * from registration where user_id='{data['user_id']}' and 
                        event_name='{data['event_name']}'and event_branch='{data['event_branch']}'""",return_json=False)
 
                 if(y[0]['registration_status']) == 'True':
                     return {"message" : "Already Registered"},400
 
                 else:
-                    query(f"""update registration set registration_status='True' where user_id='{data['user_id']}',
+                    query(f"""update registration set registration_status='True' where user_id='{data['user_id']}' and
                        event_name='{data['event_name']}'and event_branch='{data['event_branch']}'""")
                     return { "message" : "Successfully Registered"},201
             else:
                 z=query(f"""select event_id from event_details where event_name = '{data["event_name"]}' and
-                                                                     event_branch ='{data["event_branch"]}'""")
+                                                                     event_branch ='{data["event_branch"]}'""",return_json=False)
+                
                 query(f"""insert into registration(user_id,event_id,event_name,event_branch,isfav,registration_status)
                                                     values('{data['user_id']}','{z[0]['event_id']}','{data['event_name']}','{data['event_branch']}',
                                                     'False','True') """ )
                 return { "message" : "Successfully Registered"},201
         except:
-            return {"message" : "Error in connecting to table"}
+            return {"message" : "Error in connecting to table"},500
 
 
 class UserForgotPassword(Resource):

@@ -7,7 +7,7 @@ def query(querystr,return_json=True):
                                 user='admin',
                                 password='coscskillup',
                                 db='authentication',
-                                cursorclass=pymysql.cursors.DictCursor )
+                                cursorclass=pymysql.cursors.DictCursor) 
     connection.begin()
     cursor=connection.cursor()
     cursor.execute(querystr)
