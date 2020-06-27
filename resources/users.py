@@ -178,8 +178,22 @@ class Displayfav(Resource):
 
 class Registered(Resource):
     def get(self):
-        return query(f"""SELECT * FROM registration  WHERE registration_status ='True'""")
+        try:
+            x=query(f"""SELECT * FROM registration  WHERE registration_status ='True'""",return_json=False)
+            if(len(x)>0):
+                return query(f"""SELECT * FROM registration  WHERE registration_status ='True'""")
+            else:
+                return {"message" : "no registered events!"},201
+        except:
+            return{"message" : "Error in connecting table"},500
 
 class NotRegistered(Resource):
     def get(self):
-        return query(f"""SELECT * FROM registration  WHERE registration_status ='False'""")
+        try:
+            x=query(f"""SELECT * FROM registration  WHERE registration_status ='False'""",return_json=False)
+            if(len(x)>0):
+                return query(f"""SELECT * FROM registration  WHERE registration_status ='False'""")
+            else:
+                return {"message" : "All events are registered!"},201
+        except:
+            return{"message"  : "Error in connecting table"},500
