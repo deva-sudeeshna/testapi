@@ -8,13 +8,15 @@ from email.message import EmailMessage
 
 
 class Usercc():
-    def __init__(self,user_id,password):
+    def __init__(self,user_id,password,role):
         self.user_id=user_id
         self.password=password
+        self.role=role
 
     @classmethod
     def getUserByuser_id(cls,user_id):
-        res=query(f"""SELECT user_id,password FROM login_details WHERE user_id='{user_id}' and role ='CC'""",return_json=False)
+        res=query(f"""SELECT user_id,password,role FROM login_details WHERE user_id='{user_id}' and role ='CC'""",return_json=False)
+        print(res)
         if len(res)>0:  return Usercc(res[0]['user_id'],res[0]['password'],res[0]["role"])
         return False
 
@@ -26,7 +28,7 @@ class CClogin(Resource):
         parser.add_argument("role",type=str,required=True,help="role cannot be left blank!")
         data=parser.parse_args()
         user=Usercc.getUserByuser_id(data['user_id'])
-        if user and safe_str_cmp(user.password,data['password']):
+        if user and safe_str_cmp(user.password,data['password']) and safe_str_cmp(user.role,data['role']):
             access_token=create_access_token(identity=user.user_id,expires_delta=False)
             return {"message":"ALLOW ACCESS !!"},200
         return {"message":"Invalid Credentials!"}, 401 

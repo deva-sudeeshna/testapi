@@ -13,7 +13,7 @@ class User():
 
     @classmethod
     def getUserByuser_id(cls,user_id):
-        result=query(f"""SELECT user_id,password FROM login_details  WHERE user_id='{user_id}' and role= 'user' """,return_json=False)
+        result=query(f"""SELECT user_id,password FROM login_details  WHERE user_id='{user_id}' """,return_json=False)
         if len(result)>0:  return User(result[0]['user_id'],result[0]['password'])
         return False
 
@@ -26,7 +26,7 @@ class UserLogin(Resource):
         parser.add_argument("role",type=str,required=True,help="role cannot be left blank!")
         data=parser.parse_args()
         user=User.getUserByuser_id(data['user_id'])
-        if user and safe_str_cmp(user.password,data['password']):
+        if user and safe_str_cmp(user.password,data['password']) and data['role']=='user':
             access_token=create_access_token(identity=user.user_id,expires_delta=False)
             return {"message":"ALLOW ACCESS !!"},200
         return {"message":"Invalid Credentials!"}, 401 
@@ -83,12 +83,12 @@ class Registration(Resource):
                        event_name='{data['event_name']}'and event_branch='{data['event_branch']}'""",return_json=False)
 
                 if(y[0]['registration_status']) == 'True':
-                    return {"message" : "Already Registered"},400
+                    return {"message" : "Already Registered!"},400
 
                 else:
                     query(f"""update registration set registration_status='True' where user_id='{data['user_id']}' and
                        event_name='{data['event_name']}'and event_branch='{data['event_branch']}'""")
-                    return { "message" : "Successfully Registered"},201
+                    return { "message" : "Successfully Registered!"},201
             else:
                 z=query(f"""select event_id from event_details where event_name = '{data["event_name"]}' and
                                                                      event_branch ='{data["event_branch"]}'""",return_json=False)
@@ -96,7 +96,7 @@ class Registration(Resource):
                 query(f"""insert into registration(user_id,event_id,event_name,event_branch,isfav,registration_status)
                                                     values('{data['user_id']}','{z[0]['event_id']}','{data['event_name']}','{data['event_branch']}',
                                                     'False','True') """ )
-                return { "message" : "Successfully Registered"},201
+                return { "message" : "Successfully Registered!"},201
         except:
             return {"message" : "Error in connecting to table"},500
 
