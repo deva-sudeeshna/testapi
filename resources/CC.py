@@ -21,7 +21,7 @@ class Usercc():
 class CClogin(Resource):
     def post(self):
         parser=reqparse.RequestParser()
-        parser.add_argument('user_id',type=int,required=True,help="user_id cannot be left blank!")
+        parser.add_argument('user_id',type=str,required=True,help="user_id cannot be left blank!")
         parser.add_argument("password",type=str,required=True,help="password cannot be left blank!")
         parser.add_argument("role",type=str,required=True,help="role cannot be left blank!")
         data=parser.parse_args()

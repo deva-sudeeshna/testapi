@@ -24,7 +24,6 @@ class Registration(Resource):
         parser.add_argument("event_name",type=str,required=True,help="event_name cannot be left blank!")
         parser.add_argument('event_branch',type=str,required=True,help="event_branch cannot be left blank!")
         parser.add_argument("isfav",type=str,required=True,help="isfav cannot be left blank!")
-        parser.add_argument("payment_status",type=str,required=True,help="payment_status cannot be left blank!")
         data=parser.parse_args()
         try:
             x=query(f"""SELECT * FROM registration where user_id = '{data["user_id"]}' and 
@@ -63,6 +62,66 @@ class UserLogin(Resource):
             access_token=create_access_token(identity=user.user_id,expires_delta=False)
             return {"message":"ALLOW ACCESS !!"},200
         return {"message":"Invalid Credentials!"}, 401 
+
+class Favourites(Resource):
+    def post(self):
+        parser=reqparse.RequestParser()
+        parser.add_argument('user_id',type=str,required=True,help="user_id cannot be left blank!")
+        parser.add_argument("event_name",type=str,required=True,help="event_name cannot be left blank!")
+        parser.add_argument('event_branch',type=str,required=True,help="event_branch cannot be left blank!")
+        data=parser.parse_args()
+        try:
+            x=query(f"""select * from registration where user_id='{data['user_id']}',
+                       event_name='{data['event_name']}'and event_branch='{data['event_branch']}'""",return_json=False)
+            if(len(x)>0):
+                if x[0]['isfav']=='True':
+                    query(f"""update from registration set isfav='False'""")
+                else:
+                    query(f"""update from registration set isfav='True'""")
+            else:
+                z=query(f"""select event_id from event_details where event_name = '{data["event_name"]}' and
+                                                                     event_branch ='{data["event_branch"]}'""")
+
+                query(f"""insert into registration(user_id,event_id,event_name,event_branch,isfav,registration_status)
+                                                    values('{data['user_id']}','{z[0]['event_id']}','{data['event_name']}','{data['event_branch']}',
+                                                    'True','False') """ )
+        except:
+            pass
+
+
+
+class Registration(Resource):
+    def post(self):
+        parser=reqparse.RequestParser()
+        parser.add_argument('user_id',type=str,required=True,help="user_id cannot be left blank!")
+        parser.add_argument("event_name",type=str,required=True,help="event_name cannot be left blank!")
+        parser.add_argument('event_branch',type=str,required=True,help="event_branch cannot be left blank!")
+        data=parser.parse_args()
+        try:
+            x=query(f"""select * from registration where user_id='{data['user_id']}',
+                       event_name='{data['event_name']}'and event_branch='{data['event_branch']}'""",return_json=False)
+
+            if(len(x)>0):
+                y=query(f"""select * from registration where user_id='{data['user_id']}',
+                       event_name='{data['event_name']}'and event_branch='{data['event_branch']}'""",return_json=False)
+
+                if(y[0]['registration_status']) == 'True':
+                    return {"message" : "Already Registered"},400
+
+                else:
+                    query(f"""update registration set registration_status='True' where user_id='{data['user_id']}',
+                       event_name='{data['event_name']}'and event_branch='{data['event_branch']}'""")
+                    return { "message" : "Successfully Registered"},201
+            else:
+                z=query(f"""select event_id from event_details where event_name = '{data["event_name"]}' and
+                                                                     event_branch ='{data["event_branch"]}'""")
+                query(f"""insert into registration(user_id,event_id,event_name,event_branch,isfav,registration_status)
+                                                    values('{data['user_id']}','{z[0]['event_id']}','{data['event_name']}','{data['event_branch']}',
+                                                    'False','True') """ )
+                return { "message" : "Successfully Registered"},201
+        except:
+            return {"message" : "Error in connecting to table"}
+
 
 class UserForgotPassword(Resource):
     def post(self):
@@ -104,7 +163,7 @@ class Signup(Resource):
                 query(f""" insert into users(user_id,password,phone_no) 
                      values('{data['user_id']}','{data['password']}','{data['phone_no']}')""")
                 query(f""" insert into login_details(user_id,password,role) 
-                     values('{data['user_id']}','{data['password']}','user')""")
+                     values('{data['user_id']}','{data['password']}')""")
                 return {"message":"Succesful"},201 
         except:
             return {"message" :"Error in details"},500
