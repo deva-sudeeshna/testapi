@@ -7,14 +7,15 @@ from email.message import EmailMessage
 
 
 class User():
-    def __init__(self,user_id,password):
+    def __init__(self,user_id,password,role):
         self.user_id=user_id
         self.password=password
+        self.role=role
 
     @classmethod
     def getUserByuser_id(cls,user_id):
-        result=query(f"""SELECT user_id,password FROM login_details  WHERE user_id='{user_id}' """,return_json=False)
-        if len(result)>0:  return User(result[0]['user_id'],result[0]['password'])
+        result=query(f"""SELECT user_id,password,role FROM login_details  WHERE user_id='{user_id}' """,return_json=False)
+        if len(result)>0:  return User(result[0]['user_id'],result[0]['password'],result[0]["role"])
         return False
 
 
@@ -26,7 +27,7 @@ class UserLogin(Resource):
         parser.add_argument("role",type=str,required=True,help="role cannot be left blank!")
         data=parser.parse_args()
         user=User.getUserByuser_id(data['user_id'])
-        if user and safe_str_cmp(user.password,data['password']) and data['role']=='user':
+        if user and safe_str_cmp(user.password,data['password']) and safe_str_cmp(user.role,data['role']) and data['role']=='user':
             access_token=create_access_token(identity=user.user_id,expires_delta=False)
             return {"message":"ALLOW ACCESS !!"},200
         return {"message":"Invalid Credentials!"}, 401 

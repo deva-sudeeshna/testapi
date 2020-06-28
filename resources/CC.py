@@ -15,9 +15,9 @@ class Usercc():
 
     @classmethod
     def getUserByuser_id(cls,user_id):
-        res=query(f"""SELECT user_id,password,role FROM login_details WHERE user_id='{user_id}' and role ='CC'""",return_json=False)
+        res=query(f"""SELECT user_id,password,role FROM login_details WHERE user_id='{user_id}'""",return_json=False)
         print(res)
-        if len(res)>0:  return Usercc(res[0]['user_id'],res[0]['password'],res[0]["role"])
+        if len(res)>0:  return Usercc(res[0]['user_id'],res[0]['password'],res[0]['role'])
         return False
 
 class CClogin(Resource):
@@ -28,7 +28,7 @@ class CClogin(Resource):
         parser.add_argument("role",type=str,required=True,help="role cannot be left blank!")
         data=parser.parse_args()
         user=Usercc.getUserByuser_id(data['user_id'])
-        if user and safe_str_cmp(user.password,data['password']) and safe_str_cmp(user.role,data['role']):
+        if user and safe_str_cmp(user.password,data['password']) and  safe_str_cmp(user.role,data['role']) and data['role']=="CC":
             access_token=create_access_token(identity=user.user_id,expires_delta=False)
             return {"message":"ALLOW ACCESS !!"},200
         return {"message":"Invalid Credentials!"}, 401 
@@ -155,6 +155,26 @@ class DeleteEvent(Resource):
         except:
             return{"message":"Wrong details entered can't delete the event"},500
 
+'''class Registered(Resource):
+    def post(self):
+        parser=reqparse.RequestParser()
+        parser.add_argument('user_id',type=int,required=True,help="user_id cannot be left blank!")
+        data=parser.parse_args()
+        try:
+            x=query(f"""SELECT club_id FROM CC WHERE roll_no = '{data['user_id']}'""",return_json=False)
+            query(f"""SELECT club_name FROM clubs where club_id ='{x[0]["club_id"]}' """)'''
+        
+           
+class NotRegistered(Resource):
+    def get(self):
+        try:
+            x=query(f"""SELECT * FROM registration  WHERE registration_status ='False'""",return_json=False)
+            if(len(x)>0):
+                return query(f"""SELECT * FROM registration  WHERE registration_status ='False'""")
+            else:
+                return {"message" : "All events are registered!"},201
+        except:
+            return{"message"  : "Error in connecting table"},500
 
 
 
