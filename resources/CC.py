@@ -155,27 +155,44 @@ class DeleteEvent(Resource):
         except:
             return{"message":"Wrong details entered can't delete the event"},500
 
-'''class Registered(Resource):
+class Registered(Resource):
     def post(self):
         parser=reqparse.RequestParser()
         parser.add_argument('user_id',type=int,required=True,help="user_id cannot be left blank!")
         data=parser.parse_args()
         try:
-            x=query(f"""SELECT club_id FROM CC WHERE roll_no = '{data['user_id']}'""",return_json=False)
-            query(f"""SELECT club_name FROM clubs where club_id ='{x[0]["club_id"]}' """)'''
+            x= query(f"""SELECT *  from registration where registration_status='True' and event_id in
+                        (select event_details.event_id from event_details,CC,clubs where CC.club_id = clubs.club_id and
+							event_details.club_name = clubs.club_name and CC.roll_no ='{data['user_id']}')""",return_json=False)
+                        
+            if(len(x)>0):
+                return query(f"""SELECT *  from registration where registration_status='True' and event_id in
+                        (select event_details.event_id from event_details,CC,clubs where CC.club_id = clubs.club_id and
+							event_details.club_name = clubs.club_name and CC.roll_no ='{data['user_id']}')""")
+            else:
+                return{"message":"None of the events is registered"},200
+        except:
+            return{"message" : "can't connect to the table"},500
+
         
            
 class NotRegistered(Resource):
-    def get(self):
-        try:
-            x=query(f"""SELECT * FROM registration  WHERE registration_status ='False'""",return_json=False)
-            if(len(x)>0):
-                return query(f"""SELECT * FROM registration  WHERE registration_status ='False'""")
+    def post(self):
+        parser=reqparse.RequestParser()
+        parser.add_argument('user_id',type=int,required=True,help="user_id cannot be left blank!")
+        data=parser.parse_args()
+        try:    
+            x=query(f"""SELECT *  from registration where registration_status='False' and event_id in
+                        (select event_details.event_id from event_details,CC,clubs where CC.club_id = clubs.club_id and
+							event_details.club_name = clubs.club_name and CC.roll_no ='{data['user_id']}')""",return_json=False)
+            if(len(x)>0):       
+                return query(f"""SELECT *  from registration where registration_status='False' and event_id in
+                        (select event_details.event_id from event_details,CC,clubs where CC.club_id = clubs.club_id and
+							event_details.club_name = clubs.club_name and CC.roll_no ='{data['user_id']}')""")
             else:
-                return {"message" : "All events are registered!"},201
+                return{"message" : "All the events are registered"}
         except:
-            return{"message"  : "Error in connecting table"},500
-
+            return{"message" : "can't connect to the table"},500
 
 
 
