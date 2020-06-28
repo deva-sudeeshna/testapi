@@ -29,7 +29,7 @@ class UserLogin(Resource):
         user=User.getUserByuser_id(data['user_id'])
         if user and safe_str_cmp(user.password,data['password']) and safe_str_cmp(user.role,data['role']) and data['role']=='user':
             access_token=create_access_token(identity=user.user_id,expires_delta=False)
-            return {"message":"ALLOW ACCESS !!"},200
+            return {"message":"ALLOW ACCESS !!","data" : data},200
         return {"message":"Invalid Credentials!"}, 401 
 
 
@@ -130,20 +130,22 @@ class UserForgotPassword(Resource):
 class Signup(Resource):
     def post(self):
         parser=reqparse.RequestParser()
+        parser.add_argument('name',type=str,required=True,help="Name cabbot be left blank!")
         parser.add_argument('user_id',type=str,required=True,help="user_id cannot be kept blank!")
         parser.add_argument('password',type=str,required=True,help="Password cannot be kept blank!")
         parser.add_argument('phone_no',type=str,required=True,help="phone_no cannot be kept blank!")
+        parser.add_argument('email',type=str,required=True,help="email cannot be kept blank!")
         data=parser.parse_args()
         try:
             x=query(f"""SELECT * FROM users where user_id = '{data["user_id"]}' """,return_json=False)
             if len(x)>0: 
                 return {"message" : "user  already  exists!"},400
             else: 
-                query(f""" insert into users(user_id,password,phone_no) 
-                     values('{data['user_id']}','{data['password']}','{data['phone_no']}')""")
+                query(f""" insert into users(user_id,password,phone_no,email,name) 
+                     values('{data['user_id']}','{data['password']}','{data['phone_no']}','{data['email']}','{data['name']}')""")
                 query(f""" insert into login_details(user_id,password,role) 
-                     values('{data['user_id']}','{data['password']}')""")
-                return {"message":"Succesful"},201 
+                     values('{data['user_id']}','{data['password']}','user')""")
+                return {"message":"Succesful","data":data},201 
         except:
             return {"message" :"Error in details"},500
         

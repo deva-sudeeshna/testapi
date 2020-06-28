@@ -30,7 +30,7 @@ class CClogin(Resource):
         user=Usercc.getUserByuser_id(data['user_id'])
         if user and safe_str_cmp(user.password,data['password']) and  safe_str_cmp(user.role,data['role']) and data['role']=="CC":
             access_token=create_access_token(identity=user.user_id,expires_delta=False)
-            return {"message":"ALLOW ACCESS !!"},200
+            return {"message":"ALLOW ACCESS !!","data" : data},200
         return {"message":"Invalid Credentials!"}, 401 
 
 class ChangePassword(Resource):

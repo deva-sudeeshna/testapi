@@ -38,7 +38,7 @@ api.add_resource(EditEvent,'/editevent')
 api.add_resource(ChangePassword,'/changepassword')
 api.add_resource(CCForgotPassword,'/ccforgotpassword')
 api.add_resource(Registered,'/registered')
-api.add_resource(NotRegistered,'/notregistered')
+
 
 api.add_resource(UserLogin,'/userlogin')
 api.add_resource(Signup,'/signup')
@@ -50,4 +50,4 @@ api.add_resource(Favourites,'/favourites')
 
 #app.run(port='8055',debug=True)
 if __name__=='__main__':
-   app.run()
+  app.run()
