@@ -29,7 +29,8 @@ class UserLogin(Resource):
         user=User.getUserByuser_id(data['user_id'])
         if user and safe_str_cmp(user.password,data['password']) and safe_str_cmp(user.role,data['role']) and data['role']=='user':
             access_token=create_access_token(identity=user.user_id,expires_delta=False)
-            return {"message":"ALLOW ACCESS !!","data" : data},200
+            details = query(f"""select * from users where user_id = '{data['user_id']}'""",return_json=False)
+            return {"message":"Succesful","details":details},201
         return {"message":"Invalid Credentials!"}, 401 
 
 
@@ -145,7 +146,8 @@ class Signup(Resource):
                      values('{data['user_id']}','{data['password']}','{data['phone_no']}','{data['email']}','{data['name']}')""")
                 query(f""" insert into login_details(user_id,password,role) 
                      values('{data['user_id']}','{data['password']}','user')""")
-                return {"message":"Succesful","data":data},201 
+
+                return {"message":"Succesful"},201 
         except:
             return {"message" :"Error in details"},500
         

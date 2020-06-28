@@ -16,7 +16,6 @@ class Usercc():
     @classmethod
     def getUserByuser_id(cls,user_id):
         res=query(f"""SELECT user_id,password,role FROM login_details WHERE user_id='{user_id}'""",return_json=False)
-        print(res)
         if len(res)>0:  return Usercc(res[0]['user_id'],res[0]['password'],res[0]['role'])
         return False
 
@@ -29,8 +28,9 @@ class CClogin(Resource):
         data=parser.parse_args()
         user=Usercc.getUserByuser_id(data['user_id'])
         if user and safe_str_cmp(user.password,data['password']) and  safe_str_cmp(user.role,data['role']) and data['role']=="CC":
+            details=query(f"""select * from CC where roll_no = '{data['user_id']}'""",return_json=False)
             access_token=create_access_token(identity=user.user_id,expires_delta=False)
-            return {"message":"ALLOW ACCESS !!","data" : data},200
+            return {"message":"ALLOW ACCESS !!","details" : details},200
         return {"message":"Invalid Credentials!"}, 401 
 
 class ChangePassword(Resource):
