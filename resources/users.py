@@ -107,19 +107,20 @@ class UserForgotPassword(Resource):
     def post(self):
         parser=reqparse.RequestParser()
         parser.add_argument('user_id',type=str,required=True,help="user_id cannot be left blank!")
-        parser.add_argument('email',type=str,required=True,help="user_id cannot be left blank!")
+        
         data=parser.parse_args()
         try:
             z=query(f"""select * from users where user_id = '{data['user_id']}'""",return_json=False)
             if(len(z)>0):
-                x=query(f"""select password from login_details where user_id in(select user_id from users where user_id = '{data['user_id']}')""",return_json=False)
+                x=query(f"""select password from login_details where user_id = '{data['user_id']}'""",return_json=False)
+                y=query(f"""select email from users where user_id= '{data['user_id']}'""",return_json=False)
                 s = smtplib.SMTP("smtp.gmail.com", 587)
                 s.ehlo()
                 s.starttls()
                 s.ehlo()
                 s.login('cbit10793@gmail.com', 'admin@sudhee') 
                 message = "\""+ x[0]['password']+"\""  +"  was your password"
-                s.sendmail("cbit10793@gmail.com",data['email'],message)  
+                s.sendmail("cbit10793@gmail.com",y[0]['email'],message)  
                 s.quit() 
                 return {"message":"Succesfully sent to your mail!"},201
             else:
