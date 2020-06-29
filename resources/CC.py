@@ -38,16 +38,15 @@ class ChangePassword(Resource):
         parser=reqparse.RequestParser()
         parser.add_argument('user_id',type=int,required=True,help="user_id cannot be left blank!")
         parser.add_argument("password",type=str,required=True,help="password cannot be left blank!")
-        parser.add_argument("confirm password",type=str,required=True,help="confirm password cannot be left blank!")
+
         data=parser.parse_args()
         try:
             x=query(f"""SELECT * FROM login_details where user_id = '{data["user_id"]}'""",return_json=False)
             if len(x)>0: 
-                if(data["password"]==data["confirm password"]):
+                
                     query(f"""update  login_details set password = '{data['password']}' where user_id = '{data["user_id"]}'""")
                     return {"message" : "Successfully changed password"},201
-                else:
-                    return {"message" : "Given Passwords doesnot match !"},400
+                
             else:
                 return {"message" : "Entered user_id doesn't exist!"},400
         except:
