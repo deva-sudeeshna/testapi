@@ -83,6 +83,18 @@ class AddClub(Resource):
         return {"message":"Succesful"},201
 
 
+class ClubId(Resource):
+    def get(self):
+        try:
+            x=query(f"""select club_id from clubs """,return_json=False)
+            if(len(x)>0):
+                return query(f"""select club_id from clubs """,return_json=False)
+            else:
+                return {"message" : "No clubs are present!"},201
+        except:
+            return {"message" : "Can't connect to the table!"},500
+
+
 class EventDetails(Resource):
     def get(self):
         try:
